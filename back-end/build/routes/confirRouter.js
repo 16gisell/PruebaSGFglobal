@@ -12,7 +12,7 @@ class ConfirRouter {
     }
     config() {
         this.router.get('/', confirController_1.default.ListPagoConf);
-        this.router.get('/:id', confirController_1.default.ListPagoConfID);
+        this.router.get('/:token', confirController_1.default.ListPagoConfID);
         this.router.post('/', confirController_1.default.crearPagoConf);
         this.router.put('/:id', confirController_1.default.actualizarpagoConf);
     }

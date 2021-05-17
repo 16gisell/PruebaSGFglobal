@@ -20,8 +20,8 @@ class UserService{
         return usuarios;
     }
 
-    async getUserId(id){
-        const respuesta= await fetch(`${this.URI}/${id}`);
+    async getUserId(token){
+        const respuesta= await fetch(`${this.URI}/${token}`);
         const usuario =respuesta.json();
         return usuario;
     }
@@ -88,40 +88,13 @@ class UserService{
         }
     }
 
-    // Salir(){
-    //     let accessToken = localStorage.getItem('accessToken')
-    //     const api_consult = 'http://localhost:3000/api/user';
-    //     localStorage.removeItem('accessToken')
-    //     localStorage.removeItem('currenUser')
-    //     // return this.http.post<userInterface>(api_consult, {headers: this.headers});
-    // }
+    Salir(){
+        let accessToken = localStorage.getItem('accessToken')
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('currenUser')
+        setTimeout(function(){  window.location.href='/#/login'}, 100);     
+    }
     
-    // async getGastosU(id){
-    //     const respuesta= await fetch(`${this.URI}/${id}`);
-    //     const gasto =respuesta.json();
-    //     return gasto;
-    // }
-
-    // async editGasto(id, gasto){
-    //     const dele = await fetch(`${this.URI}/${id}`,{
-    //         method:'PUT',
-    //         body:gasto,
-    //         headers:{
-    //             'content-type': 'application/json'
-    //         }            
-    //     })
-    //     const data = await dele.json();
-    // }
-
-    // async deliteGasto(id){
-    //     const dele = await fetch(`${this.URI}/${id}`,{
-    //         headers:{
-    //             'content-type': 'application/json'
-    //         },
-    //         method:'DELETE'
-    //     })
-    //     const data = await dele.json();
-    // }
 }
 
 export default UserService

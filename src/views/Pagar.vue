@@ -40,8 +40,7 @@
                                 <base-input alternative class="mb-3" type="email" placeholder="Correo" addon-left-icon="ni ni-email-83" required v-model="correo" ></base-input>
                                 <base-input class="mb-4">
                                     <textarea class="form-control form-control-alternative" name="name" rows="4" cols="80" placeholder="Descripcion" v-model="descripcion"> </textarea>
-                                </base-input>
-                                
+                                </base-input>                                
                                 <button class="btn btn-primary btn-lg btn-block btnG" >Continuar</button>                                
                             </form>
                             <modals v-if="activ == true"></modals>
@@ -58,11 +57,13 @@
     import Modals from "./components/JavascriptComponents/Modals";
     import TokenService from "../services/tokenService";
     import ConfigService from "../services/configService";
+    import CuentaService from '../services/cuentaService';
 
     const userService = new UserService();
     const pagosServices = new PagosServices();
     const tokenService = new TokenService();
     const configService = new ConfigService();
+    const cuentaService = new CuentaService();
 
     export default {
         components: {  
@@ -91,33 +92,46 @@
         methods:{
             get_Users(){
                 this.UserLog= userService.getToken();
-                console.log(this.UserLog, "del get") 
+            },
+            get_monto(){
+                
             },
             Pagar(){
-                console.log(this.UserLog)   
-                var datos=JSON.stringify({
-                    "token_user": this.UserLog,
-                    "correo":this.correo,
-                    "codigoTienda": this.codigoTienda,
-                    "monto": this.monto,
-                    "tipo":"Pago",
-                    "descripcion": this.descripcion,
-                })
-                console.log(datos)
-                this.codigo();
-                const pagar = pagosServices.postPagos(datos);
-                pagar.then(data=>{
-                    if(data.error){
+                const getMonto = cuentaService.getCuentaId(this.UserLog);
+                const monto = parseInt(this.monto)
+                getMonto.then(data=>{
+                    if(this.correo == "" || this.monto == "" || this.codigoTienda == "" || this.descripcion == ""){
                         this.Notsend = true,
-                        this.messagesFalse = data.error
-                    }else{
-                        this.send = true,
-                        this.messagesTrue = data.message + "Por favor verifica tu correo para obtener el codigo"                 
-                        this.activ = true;
-                        // this.$router.push('/')
+                        this.messagesFalse = "Por favor complete todos los campos"
                     }
-                    
-                })
+                    else if(monto > data.total){
+                        this.Notsend = true,
+                        this.messagesFalse = "El monto ingresado es mayor al monto total de la cuenta" 
+                    }
+                    else{                        
+                        var datos=JSON.stringify({
+                            "token_user": this.UserLog,
+                            "correo":this.correo,
+                            "codigoTienda": this.codigoTienda,
+                            "monto": this.monto,
+                            "tipo":"Pago",
+                            "descripcion": this.descripcion,
+                        })
+                        this.codigo();
+                        const pagar = pagosServices.postPagos(datos);
+                        pagar.then(data=>{
+                            if(data.error){
+                                this.Notsend = true,
+                                this.messagesFalse = data.error
+                            }else{
+                                this.Notsend = false,
+                                this.send = true,
+                                this.messagesTrue = data.message + "Por favor verifica tu correo para obtener el codigo"                 
+                                this.activ = true;
+                            }
+                        })
+                    }
+                })                
             },
             codigo(){
                 const token= tokenService.generarToken();
@@ -130,7 +144,6 @@
                 })
                 const generarCodigo = configService.postConfig(dat);
                 generarCodigo.then(data=>{
-                    console.log(data, "holaaaa")
                 })
             }
         }

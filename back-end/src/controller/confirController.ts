@@ -10,18 +10,18 @@ class ConfirController{
     }
 
     public async ListPagoConfID(req:Request, res:Response): Promise<any>{//para listar por uno
-        const{id} = req.params;
-        const user = await pool.query('SELECT * FROM confirpago WHERE id = ?', [id]);
+        const{token} = req.params;
+        const user = await pool.query('SELECT * FROM confirpago WHERE token_user = ?', [token]);
         if(user.length>0){
             return res.json(user[0]);
         }
-        res.status(404).json({text:"no existe"});
+        res.status(404).json({error:"no existe"});
     }
 
     public async crearPagoConf(req:Request, res:Response): Promise<void>{//para crear
             await pool.query('INSERT INTO confirpago set ?', [req.body]); //esto es el inserto y consulta con la base de datos
             const envio= Email.correo(req.body)
-            res.json({message: 'guardado el usuario'});
+            res.json({message: 'Configuracion Realizada'});
             res.status(200)        
     }
 

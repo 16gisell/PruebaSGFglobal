@@ -10,13 +10,11 @@ class UserRouter{
 
     config(): void{
         this.router.get('/', userController.listUser);
-        this.router.get('/:id',userController.usuario); 
+        this.router.get('/:token',userController.usuario); 
         this.router.post('/',userController.crearUser);
         this.router.post('/login',userController.LoginUser);
-        this.router.put('/:id',userController.actualizarUser) 
-        this.router.delete('/:id',userController.eliminarUser); 
-
-        //this.router.post('/login/:id',userController.logiar);
+        this.router.put('/:token',userController.actualizarUser) 
+        this.router.delete('/:token',userController.eliminarUser); 
     }
 
 }

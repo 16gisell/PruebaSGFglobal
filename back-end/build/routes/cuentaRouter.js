@@ -12,7 +12,7 @@ class CuentaRouter {
     }
     config() {
         this.router.get('/', cuentaController_1.default.ListCuentas);
-        this.router.get('/:id', cuentaController_1.default.ListCuentaId);
+        this.router.get('/:token', cuentaController_1.default.ListCuentaId);
         this.router.post('/', cuentaController_1.default.nuevaCuenta);
         this.router.put('/:id', cuentaController_1.default.actualizarCuenta);
     }

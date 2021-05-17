@@ -49,21 +49,17 @@
         methods:{
             get_Users(){
                 this.UserLogtoken = userService.getToken();
-                console.log(this.UserLogtoken)
             },
             get_cuentas(){
                 const cuenta = cuentaService.getCuentas();
                 cuenta.then(data=>{
-                    console.log(data)
                     for(let i=0; i<= data.length; i++){
                         if(data[i].token_user ===  this.UserLogtoken){
                             this.totalDiponible=data[i].total
-                            console.log(data[i], "sisiis token")
                         }
                     }
-                    console.log(data, "datata")
                 })
-            }
+            },
         }
     };
 </script>

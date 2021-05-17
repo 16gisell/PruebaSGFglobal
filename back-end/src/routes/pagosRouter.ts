@@ -10,7 +10,7 @@ class PagosRouter{
 
     config(): void{
         this.router.get('/', pagosController.listPagos);
-        this.router.get('/:id',pagosController.listPagosID); 
+        this.router.get('/:token',pagosController.listPagosID); 
         this.router.post('',pagosController.CargarPago);
     }
 

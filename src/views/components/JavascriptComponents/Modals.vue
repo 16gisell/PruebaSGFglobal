@@ -59,8 +59,6 @@
         data() {
             return {
             modals: {
-                modal1: false,
-                modal2: false,
                 modal3: false,    
             },
                 UserLog:"",
@@ -68,105 +66,117 @@
                 messagesFalse:"",
                 send:false,
                 Notsend:false,
-                activ:false,
                 TokenUnico:"",
 
                 codigo:"",
                 id: "",
                 montoConf:"",
+
+                CodigoEmail:"",
+                tokenConf:"",
             };
         },
         created(){   
-            this.get_Users();                 
+            this.get_Users();               
         },
         methods:{
             get_Users(){
-                this.UserLog= userService.getToken();
-                console.log(this.UserLog, "del get");                
+                this.UserLog= userService.getToken();              
             },
-            getUsuarios(){
-                const getUser= userService.getUsers(); //traemos u verificamos tokens de usuario con usuario activo
-                getUser.then(data=>{
-                    console.log(data,"desde Confirm")
-                    for(let i=0; i<= data.length; i++){
-                        const tokenUsers= data[i].token;
-                        if(tokenUsers === this.UserLog){
-                            this.TokenUnico=tokenUsers;     //traigo token unico                       
-                        }
+            //traemos y verificamos tokens de usuario con usuario activo
+            getUsuarios(){ 
+                const getUser = userService.getUsers(this.UserLog)
+                .then(data=>{
+                    if(data.token === this.UserLog){
+                        this.TokenUnico=data.token;     //traigo token unico                       
                     }
                 })
             },
+            //verificamos que los codigos sean iguales y coincidan
             Confirm(){
-                this.getUsuarios()     //verificamos que los codigos sean iguales y coincidan           
+                this.getUsuarios()               
                 const getConfirs= configService.getConfig();
+
                 getConfirs.then(data=>{
                     for(let i=0; i<=data.length; i++){
-                        const CodigoEmail = data[i].codigoEnviado_email;
-                        const tokenConf = data[i].token_user;
+                        
+                        //recorremos toda la tabla y almacenamos los datos que deseamos 
+                        this.CodigoEmail = data[i].codigoEnviado_email;
+                        this.tokenConf = data[i].token_user;
                         this.montoConf = data[i].monto;
-                       
-                        if(CodigoEmail === this.codigo &&  tokenConf === this.TokenUnico ){  //verificamso si codigoemail y codigorecibido son iguales    
-                            this.id=data[i].id;
-                            this.cuenta();
-                        }else if(!this.codigo === CodigoEmail){
+                        this.id=data[i].id;
+                        
+                        //verificamso si codigoemail y codigorecibido son iguales
+                        if(this.codigo !== this.CodigoEmail && this.tokenConf !== this.TokenUnico ){
                             this.Notsend = true,
                             this.messagesFalse = "El codigo que usted ha ingresado no es correcto "
-                        }else if(!this.TokenUnico === tokenConf){
-                            this.Notsend = true,
-                            this.messagesFalse = "Su usuario no coincide con el codigo "
-                        }                      
-                    }
+                        }
+                        else {      
+                            this.cuenta();
+                        }                                         
+                    }                    
                 })                
             },
+
+            //verificamos que en la tabla cuenta el token sea igual
             cuenta(){
                const cuentaADebitar = cuentaService.getCuentas();
-               cuentaADebitar.then(data=>{
-                   for(let i=0; i<= data.length; i++){
-                       if(data[i].token_user === this.UserLog){
-                                const total= data[i].total;
-                                const id_cuenta = data[i].id;
 
+               cuentaADebitar.then(data=>{
+                   console.log(data,"desde cuenta")
+                   for(let i=0; i<= data.length; i++){
+                        //recorremos la tabla para verificar los token y obtener id del cual se esta manejando
+                        if(data[i].token_user === this.UserLog){
+                            const total= data[i].total;
+                            const id_cuenta = data[i].id;
+                            //confirmamos que el monto este a corde a la cantidad que tenemos
+                            if(total <= this.montoConf || total == 0){
+                                    this.Notsend = true,
+                                    this.messagesFalse = "Usted no dispone de saldo suficiente para realizar esta transaccion";
+                                    setTimeout(function(){ window.location.href='/#/inicio'}, 200);
+                            }
                             if(total > this.montoConf){
                                     this.postConfir(this.id);
                                     const totalMonto= (total- this.montoConf);
                                     //enviamos el monto restando lo que tenemos
                                     this.PUTCuenta(id_cuenta, totalMonto);                        
-                            }
-                            if(total < this.montoConf){
-                                    this.Notsend = true,
-                                    this.messagesFalse = "Usted no dispone de saldo suficiente para realizar esta transaccion";
-                                    setTimeout(function(){ window.location.href='/#/'}, 3000);
-                            }
-                       }else{
-                           console.log("error")
-                       }
+                            }                            
+                        }else{
+                            console.log("Ha ocurrido un error con la cuenta")
+                        }
                    }
                })
             },
-            postConfir(id){
+
+            //almacenamos codigo comparado para confirmar que ambos codigos son iguales
+            postConfir(id_cuenta){
                 var dat=JSON.stringify({
                     "codigoRecibido_email":this.codigo
                 })
-                const postConf= configService.putConfig(id, dat);
+
+                const postConf= configService.putConfig(id_cuenta , dat);
+
                 postConf.then(data=>{
                     console.log(data, "desde editConf")
                     if(data.error){
                         this.Notsend = true,
-                        this.messagesFalse = data.error
-                        
+                        this.messagesFalse = data.error                        
                     }else{
+                        this.Notsend = false,
                         this.send = true,
-                        this.messagesTrue = data.message + "Todo Ok"                 
-                        this.activ = true;
-                        setTimeout(function(){ window.location.href='/#/inicio'}, 3000); 
+                        this.messagesTrue = data.message + "Todo Ok"  
+                        setTimeout(function(){ window.location.href='/#/inicio'}, 200); 
                     }
                 })
             },
+            //actualizamos tabla cuenta con el nuevo monto
             PUTCuenta(id_cuenta, totalMonto){                
                 var dat=JSON.stringify({
                     "total":totalMonto,
                 })
+
                 const PutCuenta= cuentaService.putCuenta(id_cuenta, dat);
+
                 PutCuenta.then(data=>{
                     console.log(data, "desdePUTTTTT");
                 })
@@ -174,5 +184,3 @@
         }
     };
 </script>
-<style>
-</style>

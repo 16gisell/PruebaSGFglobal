@@ -10,8 +10,8 @@ class CuentaService{
         return recargas;
     }
 
-    async getCuentaId(id){
-        const respuesta= await fetch(`${this.URI}/${id}`);
+    async getCuentaId(token){
+        const respuesta= await fetch(`${this.URI}/${token}`);
         const recargas =respuesta.json();
         return recargas;
     }

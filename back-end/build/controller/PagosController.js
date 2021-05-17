@@ -22,8 +22,8 @@ class PagosController {
     }
     listPagosID(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            const listRecarga = yield database_1.default.query('SELECT * FROM pagos WHERE id = ?', [id]);
+            const { token } = req.params;
+            const listRecarga = yield database_1.default.query('SELECT * FROM pagos WHERE token_user = ?', [token]);
             if (listRecarga.length > 0) {
                 return res.json(listRecarga[0]);
             }
@@ -32,9 +32,26 @@ class PagosController {
     }
     CargarPago(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield database_1.default.query('INSERT INTO pagos set ?', [req.body]);
-            res.json({ message: 'recarga realizada' });
-            res.status(200);
+            if (req.body.monto == "" && req.body.correo == "" && req.body.codigoTienda == "" && req.body.descripcion == "") {
+                res.status(401).send({ error: "todos los campos deben de ser completados" });
+            }
+            else if (req.body.monto == "") {
+                res.status(401).send({ error: "El campo monto debe ser completado" });
+            }
+            else if (req.body.correo == "") {
+                res.status(401).send({ error: "El campo correo" });
+            }
+            else if (req.body.codigoTienda == "") {
+                res.status(401).send({ error: "El campo codigo de tienda debe ser completado" });
+            }
+            else if (req.body.descripcion == "") {
+                res.status(401).send({ error: "El campo descripcion debe ser completado" });
+            }
+            else {
+                yield database_1.default.query('INSERT INTO pagos set ?', [req.body]);
+                res.json({ message: 'Codigo Enviado' });
+                res.status(200);
+            }
         });
     }
 }

@@ -12,12 +12,11 @@ class UserRouter {
     }
     config() {
         this.router.get('/', userController_1.default.listUser);
-        this.router.get('/:id', userController_1.default.usuario);
+        this.router.get('/:token', userController_1.default.usuario);
         this.router.post('/', userController_1.default.crearUser);
         this.router.post('/login', userController_1.default.LoginUser);
-        this.router.put('/:id', userController_1.default.actualizarUser);
-        this.router.delete('/:id', userController_1.default.eliminarUser);
-        //this.router.post('/login/:id',userController.logiar);
+        this.router.put('/:token', userController_1.default.actualizarUser);
+        this.router.delete('/:token', userController_1.default.eliminarUser);
     }
 }
 const userRouter = new UserRouter();

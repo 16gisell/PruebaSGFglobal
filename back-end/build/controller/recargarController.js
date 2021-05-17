@@ -33,9 +33,17 @@ class RecargaController {
     CrearRecarga(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //console.log(req.body);// para ejecutarlo desde el posman 
-            yield database_1.default.query('INSERT INTO recargas set ?', [req.body]);
-            res.json({ message: 'recarga realizada' });
-            res.status(200);
+            if (req.body.monto == "") {
+                res.status(404).json({ error: "El campo monto debe ser completado" });
+            }
+            else if (req.body.descripcion == "") {
+                res.status(404).json({ error: "El campo descripcion debe ser completado" });
+            }
+            else {
+                yield database_1.default.query('INSERT INTO recargas set ?', [req.body]);
+                res.json({ message: 'Recarga Realizada' });
+                res.status(200);
+            }
         });
     }
 }

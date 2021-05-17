@@ -10,8 +10,8 @@ class ConfigService{
         return recargas;
     }
 
-    async getConfigId(id){
-        const respuesta= await fetch(`${this.URI}/${id}`);
+    async getConfigId(token){
+        const respuesta= await fetch(`${this.URI}/${token}`);
         const recargas =respuesta.json();
         return recargas;
     }

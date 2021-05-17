@@ -10,8 +10,8 @@ class PagosService{
         return recargas;
     }
 
-    async getPagosId(id){
-        const respuesta= await fetch(`${this.URI}/${id}`);
+    async getPagosId(token){
+        const respuesta= await fetch(`${this.URI}/${token}`);
         const recargas =respuesta.json();
         return recargas;
     }

@@ -22,8 +22,8 @@ class CuentaController {
     }
     ListCuentaId(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            const user = yield database_1.default.query('SELECT * FROM cuentas WHERE id = ?', [id]);
+            const { token } = req.params;
+            const user = yield database_1.default.query('SELECT * FROM cuentas WHERE token_user = ?', [token]);
             if (user.length > 0) {
                 return res.json(user[0]);
             }
@@ -33,7 +33,7 @@ class CuentaController {
     nuevaCuenta(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             yield database_1.default.query('INSERT INTO cuentas set ?', [req.body]); //esto es el inserto y consulta con la base de datos
-            res.json({ message: 'guardado el usuario' });
+            res.json({ message: 'Nueva cuenta creada' });
             res.status(200);
         });
     }

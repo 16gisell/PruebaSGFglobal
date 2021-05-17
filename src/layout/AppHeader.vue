@@ -34,7 +34,7 @@
             </ul>
             <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                 <li class="nav-item">
-                    <a class="nav-link nav-link-icon"  href="#/pagar" rel="noopener"
+                    <a class="nav-link nav-link-icon" @click="Salir" rel="noopener"
                        data-toggle="tooltip" title="Like us on Facebook">
                         <span class="nav-link-inner--text">Salir</span>
                     </a>
@@ -61,16 +61,13 @@
                 
             };
         },
-        created(){   
-            // this.get_Users();      
+        created(){       
         },
         methods:{
-            // Salir(){
-            //     const UserLog= userService.Salir();
-            //     UserLog.then(data=>{
-            //         this.$router.push('/')
-            //     })                
-            // }
+            Salir(){
+                const UserLog= userService.Salir();
+                                
+            }
         }
     };
 </script>

@@ -59,7 +59,6 @@
         components: {  },
         data() {
             return { 
-                user:"",
                 messagesTrue:"",
                 messagesFalse:"",
                 send:false,
@@ -79,8 +78,8 @@
                     "correo":this.correo,
                     "password": this.password,
                 })
-                console.log(datos)
                 const userPost = userService.postUserLogin(datos);
+
                 userPost.then(data=>{
                     if(data.error){
                         this.Notsend = true,
@@ -88,10 +87,8 @@
                     } else{  
                         this.dataUser= data[0]
                         const sert=userService.setUser(this.dataUser)
-                        const settoken= userService.setToken(this.dataUser.token)
-                        console.log(this.dataUser)              
-                        setTimeout(function(){  window.location.href='/#/inicio'}, 3000); 
-                        console.log(data)
+                        const settoken= userService.setToken(this.dataUser.token)            
+                        setTimeout(function(){  window.location.href='/#/inicio'}, 200); 
                     }
                     
                 })

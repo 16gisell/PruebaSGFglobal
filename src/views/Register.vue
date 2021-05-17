@@ -76,6 +76,7 @@
         },
         created(){   },
         methods:{
+            //creamos usuario nuevo
             CrearUser(){
                 const token= tokenService.generarToken();
                 this.tokenUnico=token;
@@ -87,31 +88,29 @@
                     "password": this.password,
                     "token":this.tokenUnico,
                 })
-                console.log(datos)
+                
                 const userPost = userService.postUser(datos);
-                userPost.then(data=>{
-                                       
+                userPost.then(data=>{                                        
                     if(data.message){
+                        this.Notsend = false
                         const sert=userService.setUser(datos)
                         const settoken= userService.setToken(this.tokenUnico) 
                         this.NuevaCuenta()
                         this.send = true,
                         this.messagesTrue = data.message   
-                        setTimeout(function(){  window.location.href='/#/inicio'}, 3000);               
-                       
-                        console.log(data)
+                        setTimeout(function(){  window.location.href='/#/inicio'}, 3000);  
                     }
                     else{
                         this.Notsend = true,
                         this.messagesFalse = data.error
                     }
-                    console.log(data.error)
                     
                 })
                 userPost.catch((err)=>
                     console.log(err) 
-                )
+                )         
             },
+            //creamos cuenta nueva que iniciara en cero
             NuevaCuenta(){
                 var datos=JSON.stringify({
                     "total": 0,
@@ -119,7 +118,6 @@
                 })
                 const nueva= cuentaService.postCuenta(datos);
                 nueva.then(data=>{
-                    console.log(data)
                 })
             }
         }

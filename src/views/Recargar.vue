@@ -34,7 +34,7 @@
                                 <small>Disfruta de los servicios de nuestra billetera</small>
                             </div>
                             <form @submit.prevent="Recargar">                                                              
-                                <base-input alternative class="mb-3" type="text" placeholder="Monto" addon-left-icon="ni ni-hat-3" v-model="monto" required> </base-input>
+                                <base-input alternative class="mb-3" type="text" placeholder="Monto *" addon-left-icon="ni ni-hat-3" v-model="monto" required> </base-input>
                                 <base-input class="mb-4">
                                     <textarea class="form-control form-control-alternative" name="name" rows="4" cols="80" placeholder="Descripcion" v-model="descripcion"> </textarea>
                                 </base-input>
@@ -60,7 +60,6 @@
         components: {  },
         data() {
             return { 
-                user:"",
                 UserLog:"",
                 messagesTrue:"",
                 messagesFalse:"",
@@ -78,58 +77,59 @@
         methods:{
             get_Users(){
                 this.UserLog= userService.getToken();
-                console.log(this.UserLog)   
-            },            
-            Recargar(){
-                console.log(this.UserLog)   
-                var datos=JSON.stringify({
-                    "token_user": this.UserLog,
-                    "monto": this.monto,
-                    "tipo":"Recarga",
-                    "descripcion": this.descripcion,
-                })
-                console.log(datos)
-                const recargar = recargaService.postRecarga(datos);
-                recargar.then(data=>{
-                    if(data.error){
-                        this.Notsend = true,
-                        this.messagesFalse = data.error
-                    }else{
-                        this.cuenta();
-                        this.send = true,
-                        this.messagesTrue = data.message                  
-                        setTimeout(function(){  window.location.href='/#/inicio'}, 3000);     
-                    }
+            },      
+            //accion recarga saldo en billetera      
+            Recargar(){ 
+                    var datos=JSON.stringify({
+                        "token_user": this.UserLog,
+                        "monto": this.monto,
+                        "tipo":"Recarga",
+                        "descripcion": this.descripcion,
+                    })
+
+                    const recargar = recargaService.postRecarga(datos);
                     
-                })
+                    recargar.then(data=>{
+                        if(data.error){
+                            this.Notsend = true,
+                            this.messagesFalse = data.error
+                        }else{
+                            this.Notsend = false,
+                            this.cuenta();
+                            this.send = true,
+                            this.messagesTrue = data.message                  
+                            setTimeout(function(){  window.location.href='/#/inicio'}, 200);     
+                        }
+                    })
             },
+            //verificamos que el token de usuario sea compatible con el usuario activo si no posee cuenta se crea una nueva
             cuenta(){
                const cuentaADebitar = cuentaService.getCuentas();
+
                cuentaADebitar.then(data=>{
-                   console.log(data)
                    for(let i=0; i<= data.length; i++){
-                       console.log(data[i])
+                       //verificamos que el token sea correcto
                         if(data[i].token_user === this.UserLog){
                             const total= parseInt(data[i].total);
                             const CambioMonto=parseInt(this.monto)
-                            const id_cuenta = data[i].id;
-
+                            const id_cuenta = data[i].id;                        
                             const totalMonto= total+CambioMonto;
+
                             this.PUTCuenta(id_cuenta, totalMonto);
                         }else{
-                            console.log("Eroor")
+                            console.log("Error")
                         }   
                    }
                    
                })
             },
+            //actualizamos tablacuenta
             PUTCuenta(id_cuenta, totalMonto){                
                 var dat=JSON.stringify({
                     "total":totalMonto,
                 })
                 const PutCuenta= cuentaService.putCuenta(id_cuenta, dat);
                 PutCuenta.then(data=>{
-                    console.log(data, "desdePUTTTTT");
                 })
             }
         }

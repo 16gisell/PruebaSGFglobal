@@ -10,7 +10,7 @@
             <span></span>
             <span></span>
         </div>
-        <h1 class="display-3  text-white">Monto Disponible: $ {{totalDiponible}} USD</h1>
+        <h1 class="display-3  text-white text-center">Monto Disponible: $ {{totalDiponible}} USD</h1>
         <div class="container pt-lg-md">
             <div class="container">
                 <div class="row justify-content-center">
@@ -23,7 +23,7 @@
                                     <h6 class="text-primary text-uppercase">Fecha Transaccion: {{option.fecha}}</h6>
                                     <h6 class="text-primary text-uppercase">Tipo Transaccion: {{option.tipo}}</h6>
                                     <h6 class="text-primary text-uppercase" style="color: red !important;">Monto: {{option.monto}}</h6>
-                                    <h6 class="text-primary text-uppercase">Descripcion:</h6> <p class="description mt-3">{{option.description}}</p>
+                                    <h6 class="text-primary text-uppercase">Descripcion:</h6> <p class="description mt-3">{{option.descripcion}}</p>
                                 </card>
                             </div>
                             <div class="col-lg-4" v-for="option in rec" v-bind:key="option.value">
@@ -94,15 +94,12 @@
             get_cuentas(){
                 const cuenta = cuentaService.getCuentas();
                 cuenta.then(data=>{
-                    console.log(data)
                     for(let i=0; i<= data.length; i++){
                         console.log(this.UserLogtoken)
                         if(data[i].token_user ===  this.UserLogtoken){
                             this.totalDiponible=data[i].total
-                            console.log(data[i], "sisiis token")
                         }
                     }
-                    console.log(data, "datata")
                 })
             }
             

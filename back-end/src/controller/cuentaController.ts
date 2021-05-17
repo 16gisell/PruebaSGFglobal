@@ -10,8 +10,8 @@ class CuentaController{
     }
 
     public async ListCuentaId(req:Request, res:Response): Promise<any>{//para listar por uno
-        const{id} = req.params;
-        const user = await pool.query('SELECT * FROM cuentas WHERE id = ?', [id]);
+        const{token} = req.params;
+        const user = await pool.query('SELECT * FROM cuentas WHERE token_user = ?', [token]);
         if(user.length>0){
             return res.json(user[0]);
         }
@@ -20,7 +20,7 @@ class CuentaController{
 
     public async nuevaCuenta(req:Request, res:Response): Promise<void>{//para crear
             await pool.query('INSERT INTO cuentas set ?', [req.body]); //esto es el inserto y consulta con la base de datos
-            res.json({message: 'guardado el usuario'});
+            res.json({message: 'Nueva cuenta creada'});
             res.status(200)        
     }
 

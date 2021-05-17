@@ -12,7 +12,7 @@ class PagosRouter {
     }
     config() {
         this.router.get('/', pagosController_1.default.listPagos);
-        this.router.get('/:id', pagosController_1.default.listPagosID);
+        this.router.get('/:token', pagosController_1.default.listPagosID);
         this.router.post('', pagosController_1.default.CargarPago);
     }
 }

@@ -23,19 +23,19 @@ class ConfirController {
     }
     ListPagoConfID(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            const user = yield database_1.default.query('SELECT * FROM confirpago WHERE id = ?', [id]);
+            const { token } = req.params;
+            const user = yield database_1.default.query('SELECT * FROM confirpago WHERE token_user = ?', [token]);
             if (user.length > 0) {
                 return res.json(user[0]);
             }
-            res.status(404).json({ text: "no existe" });
+            res.status(404).json({ error: "no existe" });
         });
     }
     crearPagoConf(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             yield database_1.default.query('INSERT INTO confirpago set ?', [req.body]); //esto es el inserto y consulta con la base de datos
             const envio = correo_1.default.correo(req.body);
-            res.json({ message: 'guardado el usuario' });
+            res.json({ message: 'Configuracion Realizada' });
             res.status(200);
         });
     }
